@@ -1,7 +1,5 @@
 # Transformers_BERT_binary_classification
 
-## 简介
-
 基于HuggingFacek开发的Transformers库，使用BERT构建模型完成一基于中文语料的二分类模型。
 
 
@@ -10,9 +8,9 @@
 
 torch：1.5.1
 
-tensorflow：2.2.0
-
 transformers：3.0.2
+
+tensorflow：2.2.0（不一定需要，若要将BERT进行转版本时需要）
 
 
 
@@ -28,11 +26,11 @@ transformers：3.0.2
 
 ## BERT
 
-需要将BERT进行转档至Pytorch可用的版本
+注意：需要将BERT进行转档至Pytorch可用的版本，若有需要pytorch版本的BERT模型请在issue留言。
 
 
 
 ## 结果
 
-约20个epochs不到可以使Acc到90+%
+约20个epochs可以使Acc到90+%
 
