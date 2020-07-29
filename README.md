@@ -1,6 +1,6 @@
 # Transformers_BERT_binary_classification
 
-基于HuggingFacek开发的Transformers库，使用BERT构建模型完成一基于中文语料的二分类模型。
+基于HuggingFace开发的Transformers库，使用BERT构建模型完成一基于中文语料的二分类模型。
 
 
 
