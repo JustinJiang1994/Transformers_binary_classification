@@ -33,7 +33,9 @@ class Config(object):
             },
 
             "result": {
-                "model_save_path": '../result/bert_clf.pkl'
+                "model_save_path": '../result/bert_clf_model.bin',
+                "config_save_path": '../result/bert_clf_config.bin',
+                "vocab_save_path": '../result/bert_clf_vocab.bin'
             }
         }
 

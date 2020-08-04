@@ -82,7 +82,6 @@ class transformers_bert_binary_classification(object):
 
 
     def train_an_epoch(self, iterator):
-        self.model.train()
         self.model_setup()
         epoch_loss = 0
         epoch_acc = 0
@@ -144,7 +143,6 @@ class transformers_bert_binary_classification(object):
 
 
     def train(self, epochs):
-        model_save_path = self.config.get("result", "model_save_path")
         sentiment_train_loader, sentiment_valid_loader = self.get_data()
 
         for i in range(epochs):
@@ -152,8 +150,39 @@ class transformers_bert_binary_classification(object):
             print("train loss: ", train_loss, "\t", "train acc:", train_acc)
             valid_loss, valid_acc = self.evaluate(sentiment_valid_loader)
             print("valid loss: ", valid_loss, "\t", "valid acc:", valid_acc)
-        torch.save(self.model, model_save_path)
+        self.save_model()
+
+    def save_model(self):
+        model_save_path = self.config.get("result", "model_save_path")
+        config_save_path = self.config.get("result", "config_save_path")
+        vocab_save_path = self.config.get("result", "vocab_save_path")
+
+        model_to_save = self.model.module if hasattr(self.model, 'module') else self.model
+        torch.save(model_to_save.state_dict(), model_save_path)
+        model_to_save.config.to_json_file(config_save_path)
+        self.tokenizer.save_vocabulary(vocab_save_path)
+        print("model saved...")
+
+
+    def predict(self, sentence):
+        self.model.setup()
+        self.model.eval()
+        input_ids, token_type_ids = convert_text_to_ids(self.tokenizer, sentence)
+        input_ids = seq_padding(self.tokenizer, [input_ids])
+        token_type_ids = seq_padding(self.tokenizer, [token_type_ids])
+        # 需要 LongTensor
+        input_ids, token_type_ids = input_ids.long(), token_type_ids.long()
+        # 梯度清零
+        self.optimizer.zero_grad()
+        # 迁移到GPU
+        input_ids, token_type_ids = input_ids.to(self.device), token_type_ids.to(self.device)
+        output = self.model(input_ids=input_ids, token_type_ids=token_type_ids)
+        y_pred_prob = output[0]
+        y_pred_label = y_pred_prob.argmax(dim=1)
+        print(y_pred_label)
+
 
 if __name__ == '__main__':
     classifier = transformers_bert_binary_classification()
     classifier.train(1)
+    classifier.predict("某流程该如何处理")
