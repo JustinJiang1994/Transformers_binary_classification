@@ -167,6 +167,7 @@ class transformers_bert_binary_classification(object):
     def predict(self, sentence):
         self.model.setup()
         self.model.eval()
+        # 转token后padding
         input_ids, token_type_ids = convert_text_to_ids(self.tokenizer, sentence)
         input_ids = seq_padding(self.tokenizer, [input_ids])
         token_type_ids = seq_padding(self.tokenizer, [token_type_ids])
@@ -177,9 +178,13 @@ class transformers_bert_binary_classification(object):
         # 迁移到GPU
         input_ids, token_type_ids = input_ids.to(self.device), token_type_ids.to(self.device)
         output = self.model(input_ids=input_ids, token_type_ids=token_type_ids)
+        # y_pred_prob:各个类别的概率
         y_pred_prob = output[0]
+        # 取概率最大的标签
         y_pred_label = y_pred_prob.argmax(dim=1)
-        print(y_pred_label)
+
+        # 将torch.tensor转换回int形式
+        return y_pred_label.item()
 
 
 if __name__ == '__main__':
